@@ -13,6 +13,11 @@ def isValidFile(parser, arg):
 
 
 def applyOp(string, op, param1=None, param2=None):
+    if op in 'TpDxOio\'zZ*LR+-.,yY':
+        param1 = int(param1, base=36)
+    if op in 'xO*':
+        param2 = int(param2, base=36)
+
     if op == ':': # Do nothing
         return string
     elif op == 'l': # Lowercase all letters
@@ -26,7 +31,6 @@ def applyOp(string, op, param1=None, param2=None):
     elif op == 't': # Toggle the case of all characters in word
         return ''.join(c.lower() if c.isupper() else c.upper() for c in string)
     elif op == 'T': # Toggle the case of characters at position N
-        param1 = int(param1, base=36)
         try:
             c = string[param1]
             return string[:param1] + (c.lower() if c.isupper() else c.upper()) + string[param1 + 1:]
@@ -37,7 +41,6 @@ def applyOp(string, op, param1=None, param2=None):
     elif op == 'd': # Duplicate the entire word
         return string + string
     elif op == 'p': # Append duplicated word N times
-        param1 = int(param1)
         return string * (param1 + 1)
     elif op == 'f': # Duplicate word reversed
         return string + string[::-1]
@@ -54,39 +57,29 @@ def applyOp(string, op, param1=None, param2=None):
     elif op == ']': # Deletes last character
         return string[:-1]
     elif op == 'D': # Deletes character at position N
-        param1 = int(param1, base=36)
         return string[:param1] + string[param1 + 1:]
     elif op == 'x': # Extracts M characters, starting at position N
-        N = int(param1, base=36)
-        M = int(param2, base=36)
-        if len(string) <= N:
+        if len(string) <= param1:
             return string
-        return string[N: N + M]
+        return string[param1: param1 + param2]
     elif op == 'O': # Deletes M characters, starting at position N
-        param1 = int(param1, base=36)
-        param2 = int(param2, base=36)
         return string[:param1] + string[param1 + param2:]
     elif op == 'i': # Inserts character X at position N
-        param1 = int(param1, base=36)
         return string[:param1] + param2 + string[param1:]
     elif op == 'o': # Overwrites character at position N with X
-        param1 = int(param1, base=36)
         return string[:param1] + param2 + string[param1 + 1:]
     elif op == '\'': # Truncate word at position N
-        param1 = int(param1, base=36)
         return string[:param1]
     elif op == 's': # Replace all instances of X with Y
         return ''.join(param2 if c == param1 else c for c in string)
     elif op == '@': # Purge all instances of X
         return ''.join('' if c == param1 else c for c in string)
     elif op == 'z': # Duplicates first character N times
-        param1 = int(param1)
         try:
             return string[0] * param1 + string
         except:
             return string
     elif op == 'Z': # Duplicates last character N times
-        param1 = int(param1)
         try:
             return string + string[-1] * param1
         except:
@@ -98,8 +91,6 @@ def applyOp(string, op, param1=None, param2=None):
     elif op == 'K': # Swaps last two characters
         return string[:-2] + string[-1] + string[-2]
     elif op == '*': # Swaps character at position X with character at position Y
-        param1 = int(param1, base=36)
-        param2 = int(param2, base=36)
         l = list(string)
         try:
             l[param1], l[param2] = l[param2], l[param1]
@@ -107,31 +98,26 @@ def applyOp(string, op, param1=None, param2=None):
         except:
             return string
     elif op == 'L': # Bitwise shift left character at position N
-        param1 = int(param1, base=36)
         try:
             return string[:param1] + chr(ord(string[param1]) << 1) + string[param1 + 1:]
         except:
             return string
     elif op == 'R': # Bitwise shift right character at position N
-        param1 = int(param1, base=36)
         try:
             return string[:param1] + chr(ord(string[param1]) >> 1) + string[param1 + 1:]
         except:
             return string
     elif op == '+': # Increment character at position N by 1 ascii value
-        param1 = int(param1, base=36)
         try:
             return string[:param1] + chr(ord(string[param1]) + 1) + string[param1 + 1:]
         except:
             return string
     elif op == '-': # Decrement character at position N by 1 ascii value
-        param1 = int(param1, base=36)
         try:
             return string[:param1] + chr(ord(string[param1]) - 1) + string[param1 + 1:]
         except:
             return string
     elif op == '.': # Replaces character at position N with value at N plus 1
-        param1 = int(param1, base=36)
         l = list(string)
         try:
             l[param1] = l[param1 + 1]
@@ -139,7 +125,6 @@ def applyOp(string, op, param1=None, param2=None):
         except:
             return string
     elif op == ',': # Replaces character at position N with value at N minus 1
-        param1 = int(param1, base=36)
         l = list(string)
         try:
             l[param1] = l[param1 - 1]
@@ -147,10 +132,8 @@ def applyOp(string, op, param1=None, param2=None):
         except:
             return string
     elif op == 'y': # Duplicates first N characters
-        param1 = int(param1, base=36)
         return string[:param1] + string
     elif op == 'Y': # Duplicates last N characters
-        param1 = int(param1, base=36)
         return string + string[-param1:]
     elif op == 'E': # Lowercase the whole line, then uppercase the first letter and every letter after a space
         return ' '.join(c.capitalize() for c in string.lower().split(' '))
