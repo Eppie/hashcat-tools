@@ -177,15 +177,18 @@ def applyRule(string, rule, debug=False):
 
 s = 'p@ssW0rd'
 e = 'p@ssW0rd w0rld'
+pwd = 'WhentheMusicStopsEverybodyHop'
 
 parser = argparse.ArgumentParser(description='Apply a number of rules to a number of strings')
 parser.add_argument('-v', '--verbose', action='store_true', help='Show some debugging info')
-parser.add_argument('-r', dest='rulefile', help='Read one or more rules from a file', type=lambda x: isValidFile(parser, x))
+parser.add_argument('-r', '--rule', dest='rulefile', help='Read one or more rules from a file', type=lambda x: isValidFile(parser, x))
+parser.add_argument('-m', '--mode', dest='mode', help='', choices=[1, 2, 3, 4], default=4)
 args = parser.parse_args()
 
 for rule in args.rulefile:
-    print rule
-    print applyRule(s, rule, args.verbose)
+    result = applyRule(pwd, rule, args.verbose)
+    if args.mode == 4:
+        print pwd + ':' + rule + ':' + result
 
 
 assert(applyOp(s, ':') == 'p@ssW0rd')
@@ -219,7 +222,7 @@ assert(applyOp(s, 'q') == 'pp@@ssssWW00rrdd')
 assert(applyOp(s, 'k') == '@pssW0rd')
 assert(applyOp(s, 'K') == 'p@ssW0dr')
 assert(applyOp(s, '*', '3', '4') == 'p@sWs0rd')
-# assert(applyOp(s, 'L', 2) == 'p@æsW0rd')
+assert(applyOp(s, 'L', '5') == 'p@ssW`rd')
 assert(applyOp(s, 'R', '2') == 'p@9sW0rd')
 assert(applyOp(s, '+', '2') == 'p@tsW0rd')
 assert(applyOp(s, '-', '1') == 'p?ssW0rd')
