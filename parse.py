@@ -13,7 +13,7 @@ def isValidFile(parser, arg):
 
 
 def applyOp(string, op, param1=None, param2=None):
-    if op in 'TpDxOio\'zZ*LR+-.,yY':
+    if op in 'TpDxOio\'zZ*LR+-.,yY<>=%':
         param1 = int(param1, base=36)
     if op in 'xO*':
         param2 = int(param2, base=36)
@@ -137,13 +137,53 @@ def applyOp(string, op, param1=None, param2=None):
         return string + string[-param1:]
     elif op == 'E': # Lowercase the whole line, then uppercase the first letter and every letter after a space
         return ' '.join(c.capitalize() for c in string.lower().split(' '))
+    elif op == '<': # Reject plains longer than N
+        if len(string) > param1:
+            raise ValueError('String: {} rejected because it is longer than {}'.format(string, param1))
+        else:
+            return string
+    elif op == '>': # Reject plains shorter than N
+        if len(string) < param1:
+            raise ValueError('String: {} rejected because it is shorter than {}'.format(string, param1))
+        else:
+            return string
+    elif op == '!': # Reject plains containing character X
+        if param1 in string:
+            raise ValueError('String: {} rejected because it contains \'{}\''.format(string, param1))
+        else:
+            return string
+    elif op == '/': # Reject plains NOT containing character X
+        if param1 not in string:
+            raise ValueError('String: {} rejected because it does not contain \'{}\''.format(string, param1))
+        else:
+            return string
+    elif op == '(': # Reject plains not starting with X
+        if string[0] != param1:
+            raise ValueError('String: {} rejected because it does not start with \'{}\''.format(string, param1))
+        else:
+            return string
+    elif op == ')': # Reject plains not ending with X
+        if string[-1] != param1:
+            raise ValueError('String: {} rejected because it does not end with \'{}\''.format(string, param1))
+        else:
+            return string
+    elif op == '=': # Reject plains that do not have character X at position N
+        if string[param1] != param2:
+            raise ValueError('String: {} rejected because character at position {} is not \'{}\''.format(string, param1, param2))
+        else:
+            return string
+    elif op == '%': # Reject plains which contain character X fewer than N times
+        if string.count(param2) < param1:
+            raise ValueError('String: {} rejected because character \'{}\' occurred fewer than {} times'.format(string, param2, param1))
+        else:
+            return string
     else:
         raise ValueError('Rule contained unrecognized character: {}'.format(op))
 
 
 def applyRule(string, rule, debug=False):
-    oneParam = 'Tp$^D\'@zZLR+-.,yY'
-    twoParam = 'xOios*'
+    oneParam = 'Tp$^D\'@zZLR+-.,yY<>!/()'
+    twoParam = 'xOios*=%'
 
     l = len(rule)
     i = 0;
