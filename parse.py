@@ -4,6 +4,7 @@
 import argparse
 import os.path
 
+
 def isValidFile(parser, arg):
     try:
         with open(arg, 'r') as f:
@@ -18,161 +19,161 @@ def applyOp(string, op, param1=None, param2=None):
     if op in 'xO*':
         param2 = int(param2, base=36)
 
-    if op == ':': # Do nothing
+    if op == ':':  # Do nothing
         return string
-    elif op == 'l': # Lowercase all letters
+    elif op == 'l':  # Lowercase all letters
         return string.lower()
-    elif op == 'u': # Uppercase all letteres
+    elif op == 'u':  # Uppercase all letteres
         return string.upper()
-    elif op == 'c': # Capitalize the first letter and lower the rest
+    elif op == 'c':  # Capitalize the first letter and lower the rest
         return string[0].upper() + string[1:].lower()
-    elif op == 'C': # Lowercase first found character, uppercase the rest
+    elif op == 'C':  # Lowercase first found character, uppercase the rest
         return string[0].lower() + string[1:].upper()
-    elif op == 't': # Toggle the case of all characters in word
+    elif op == 't':  # Toggle the case of all characters in word
         return ''.join(c.lower() if c.isupper() else c.upper() for c in string)
-    elif op == 'T': # Toggle the case of characters at position N
+    elif op == 'T':  # Toggle the case of characters at position N
         try:
             c = string[param1]
             return string[:param1] + (c.lower() if c.isupper() else c.upper()) + string[param1 + 1:]
         except:
             return string
-    elif op == 'r': # Reverse the entire word
+    elif op == 'r':  # Reverse the entire word
         return string[::-1]
-    elif op == 'd': # Duplicate the entire word
+    elif op == 'd':  # Duplicate the entire word
         return string + string
-    elif op == 'p': # Append duplicated word N times
+    elif op == 'p':  # Append duplicated word N times
         return string * (param1 + 1)
-    elif op == 'f': # Duplicate word reversed
+    elif op == 'f':  # Duplicate word reversed
         return string + string[::-1]
-    elif op == '{': # Rotates the word left
+    elif op == '{':  # Rotates the word left
         return string[1:] + string[0]
-    elif op == '}': # Rotates the word right
+    elif op == '}':  # Rotates the word right
         return string[-1] + string[:-1]
-    elif op == '$': # Append character X to end
+    elif op == '$':  # Append character X to end
         return string + param1
-    elif op == '^': # Prepend character X to front
+    elif op == '^':  # Prepend character X to front
         return param1 + string
-    elif op == '[': # Deletes first character
+    elif op == '[':  # Deletes first character
         return string[1:]
-    elif op == ']': # Deletes last character
+    elif op == ']':  # Deletes last character
         return string[:-1]
-    elif op == 'D': # Deletes character at position N
+    elif op == 'D':  # Deletes character at position N
         return string[:param1] + string[param1 + 1:]
-    elif op == 'x': # Extracts M characters, starting at position N
+    elif op == 'x':  # Extracts M characters, starting at position N
         if len(string) <= param1:
             return string
         return string[param1: param1 + param2]
-    elif op == 'O': # Deletes M characters, starting at position N
+    elif op == 'O':  # Deletes M characters, starting at position N
         return string[:param1] + string[param1 + param2:]
-    elif op == 'i': # Inserts character X at position N
+    elif op == 'i':  # Inserts character X at position N
         return string[:param1] + param2 + string[param1:]
-    elif op == 'o': # Overwrites character at position N with X
+    elif op == 'o':  # Overwrites character at position N with X
         return string[:param1] + param2 + string[param1 + 1:]
-    elif op == '\'': # Truncate word at position N
+    elif op == '\'':  # Truncate word at position N
         return string[:param1]
-    elif op == 's': # Replace all instances of X with Y
+    elif op == 's':  # Replace all instances of X with Y
         return ''.join(param2 if c == param1 else c for c in string)
-    elif op == '@': # Purge all instances of X
+    elif op == '@':  # Purge all instances of X
         return ''.join('' if c == param1 else c for c in string)
-    elif op == 'z': # Duplicates first character N times
+    elif op == 'z':  # Duplicates first character N times
         try:
             return string[0] * param1 + string
         except:
             return string
-    elif op == 'Z': # Duplicates last character N times
+    elif op == 'Z':  # Duplicates last character N times
         try:
             return string + string[-1] * param1
         except:
             return string
-    elif op == 'q': # Duplicate every character
+    elif op == 'q':  # Duplicate every character
         return ''.join(c * 2 for c in string)
-    elif op == 'k': # Swaps first two characters
+    elif op == 'k':  # Swaps first two characters
         return string[1] + string[0] + string[2:]
-    elif op == 'K': # Swaps last two characters
+    elif op == 'K':  # Swaps last two characters
         return string[:-2] + string[-1] + string[-2]
-    elif op == '*': # Swaps character at position X with character at position Y
+    elif op == '*':  # Swaps character at position X with character at position Y
         l = list(string)
         try:
             l[param1], l[param2] = l[param2], l[param1]
             return ''.join(l)
         except:
             return string
-    elif op == 'L': # Bitwise shift left character at position N
+    elif op == 'L':  # Bitwise shift left character at position N
         try:
             return string[:param1] + chr(ord(string[param1]) << 1) + string[param1 + 1:]
         except:
             return string
-    elif op == 'R': # Bitwise shift right character at position N
+    elif op == 'R':  # Bitwise shift right character at position N
         try:
             return string[:param1] + chr(ord(string[param1]) >> 1) + string[param1 + 1:]
         except:
             return string
-    elif op == '+': # Increment character at position N by 1 ascii value
+    elif op == '+':  # Increment character at position N by 1 ascii value
         try:
             return string[:param1] + chr(ord(string[param1]) + 1) + string[param1 + 1:]
         except:
             return string
-    elif op == '-': # Decrement character at position N by 1 ascii value
+    elif op == '-':  # Decrement character at position N by 1 ascii value
         try:
             return string[:param1] + chr(ord(string[param1]) - 1) + string[param1 + 1:]
         except:
             return string
-    elif op == '.': # Replaces character at position N with value at N plus 1
+    elif op == '.':  # Replaces character at position N with value at N plus 1
         l = list(string)
         try:
             l[param1] = l[param1 + 1]
             return ''.join(l)
         except:
             return string
-    elif op == ',': # Replaces character at position N with value at N minus 1
+    elif op == ',':  # Replaces character at position N with value at N minus 1
         l = list(string)
         try:
             l[param1] = l[param1 - 1]
             return ''.join(l)
         except:
             return string
-    elif op == 'y': # Duplicates first N characters
+    elif op == 'y':  # Duplicates first N characters
         return string[:param1] + string
-    elif op == 'Y': # Duplicates last N characters
+    elif op == 'Y':  # Duplicates last N characters
         return string + string[-param1:]
-    elif op == 'E': # Lowercase the whole line, then uppercase the first letter and every letter after a space
+    elif op == 'E':  # Lowercase the whole line, then uppercase the first letter and every letter after a space
         return ' '.join(c.capitalize() for c in string.lower().split(' '))
-    elif op == '<': # Reject plains longer than N
+    elif op == '<':  # Reject plains longer than N
         if len(string) > param1:
             raise ValueError('String: {} rejected because it is longer than {}'.format(string, param1))
         else:
             return string
-    elif op == '>': # Reject plains shorter than N
+    elif op == '>':  # Reject plains shorter than N
         if len(string) < param1:
             raise ValueError('String: {} rejected because it is shorter than {}'.format(string, param1))
         else:
             return string
-    elif op == '!': # Reject plains containing character X
+    elif op == '!':  # Reject plains containing character X
         if param1 in string:
             raise ValueError('String: {} rejected because it contains \'{}\''.format(string, param1))
         else:
             return string
-    elif op == '/': # Reject plains NOT containing character X
+    elif op == '/':  # Reject plains NOT containing character X
         if param1 not in string:
             raise ValueError('String: {} rejected because it does not contain \'{}\''.format(string, param1))
         else:
             return string
-    elif op == '(': # Reject plains not starting with X
+    elif op == '(':  # Reject plains not starting with X
         if string[0] != param1:
             raise ValueError('String: {} rejected because it does not start with \'{}\''.format(string, param1))
         else:
             return string
-    elif op == ')': # Reject plains not ending with X
+    elif op == ')':  # Reject plains not ending with X
         if string[-1] != param1:
             raise ValueError('String: {} rejected because it does not end with \'{}\''.format(string, param1))
         else:
             return string
-    elif op == '=': # Reject plains that do not have character X at position N
+    elif op == '=':  # Reject plains that do not have character X at position N
         if string[param1] != param2:
             raise ValueError('String: {} rejected because character at position {} is not \'{}\''.format(string, param1, param2))
         else:
             return string
-    elif op == '%': # Reject plains which contain character X fewer than N times
+    elif op == '%':  # Reject plains which contain character X fewer than N times
         if string.count(param2) < param1:
             raise ValueError('String: {} rejected because character \'{}\' occurred fewer than {} times'.format(string, param2, param1))
         else:
@@ -186,7 +187,7 @@ def applyRule(string, rule, debug=False):
     twoParam = 'xOios*=%'
 
     l = len(rule)
-    i = 0;
+    i = 0
     while i < l:
         op = rule[i]
         if op == ' ':
